@@ -1,0 +1,3 @@
+/*
+  Content-Security-Policy: default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.gstatic.com https://*.googleapis.com https://*.firebaseapp.com https://*.firebasedatabase.app https://*.firebaseio.com https://fonts.gstatic.com https://fonts.googleapis.com https://apis.google.com https://*.google.com data: blob:
+  Access-Control-Allow-Origin: *
