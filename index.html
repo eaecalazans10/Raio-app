@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Raio">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAADICAYAAACtWK6eAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMS8xMy8xMmdOTSUAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVR4nO3BMQEAAADCoPVP7WsIoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAeAMBuAABHgAAAABJRU5ErkJggg==">
+<title>Raio — Rotina</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0e1a;--card:#161d2e;--card2:#1e2840;--border:rgba(255,255,255,0.07);--green:#22c55e;--blue:#3b82f6;--orange:#f97316;--yellow:#eab308;--purple:#a855f7;--cyan:#06b6d4;--white:#f8fafc;--gray:#94a3b8;--gray2:#64748b;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;overflow:hidden;}
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;}
+.header{padding:50px 20px 12px;background:linear-gradient(180deg,#0d1526,var(--bg));flex-shrink:0;}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;}
+.greeting{font-family:'Syne',sans-serif;font-size:21px;font-weight:800;}
+.greeting span{color:var(--green);}
+.daybadge{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--gray);}
+.hsub{font-size:12px;color:var(--gray);font-weight:300;}
+.tabs{display:flex;gap:6px;padding:10px 20px;overflow-x:auto;flex-shrink:0;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;border:1px solid var(--border);background:var(--card);color:var(--gray);cursor:pointer;transition:all .2s;}
+.tab.active{background:var(--green);color:#000;border-color:var(--green);}
+.tab.raio-tab.active{background:var(--yellow);color:#000;border-color:var(--yellow);}
+.scroll{flex:1;overflow-y:auto;padding:0 20px 30px;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+.view{display:none;}.view.active{display:block;}
+.dsel{display:flex;gap:7px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
+.dsel::-webkit-scrollbar{display:none;}
+.dbtn{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 12px;border-radius:12px;background:var(--card);border:1px solid var(--border);cursor:pointer;transition:all .2s;}
+.dbtn.active{background:var(--blue);border-color:var(--blue);}
+.dbtn .dn{font-size:9px;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;}
+.dbtn.active .dn{color:rgba(255,255,255,.8);}
+.dbtn .dd{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--white);}
+.stitle{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray2);margin:14px 0 8px;}
+.pbar{background:var(--card2);border-radius:10px;height:6px;overflow:hidden;margin-bottom:5px;}
+.pfill{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));border-radius:10px;transition:width .5s;}
+.plbl{display:flex;justify-content:space-between;font-size:11px;color:var(--gray);margin-bottom:4px;}
+.tl{position:relative;padding-left:44px;}
+.tl::before{content:'';position:absolute;left:17px;top:20px;bottom:20px;width:1px;background:var(--border);}
+.ti{position:relative;margin-bottom:8px;animation:fu .35s ease both;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ti:nth-child(1){animation-delay:.03s}.ti:nth-child(2){animation-delay:.06s}.ti:nth-child(3){animation-delay:.09s}
+.ti:nth-child(4){animation-delay:.12s}.ti:nth-child(5){animation-delay:.15s}.ti:nth-child(6){animation-delay:.18s}
+.ti:nth-child(7){animation-delay:.21s}.ti:nth-child(8){animation-delay:.24s}.ti:nth-child(9){animation-delay:.27s}
+.ti:nth-child(10){animation-delay:.30s}.ti:nth-child(11){animation-delay:.33s}
+.tdot{position:absolute;left:-34px;top:13px;width:13px;height:13px;border-radius:50%;border:2px solid var(--border);background:var(--bg);transition:all .2s;}
+.tdot.done{background:var(--green);border-color:var(--green);}
+.tdot.treino{border-color:var(--blue);}
+.tdot.refeicao{border-color:var(--orange);}
+.tdot.suple{border-color:var(--purple);}
+.tdot.sono{border-color:var(--cyan);}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 13px;transition:all .2s;}
+.tc.ck{border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.05);}
+.tc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.tc-time{font-size:10px;font-weight:600;color:var(--gray);}
+.tbg{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;}
+.bg-treino{background:rgba(59,130,246,.2);color:var(--blue);}
+.bg-refeicao{background:rgba(249,115,22,.2);color:var(--orange);}
+.bg-suple{background:rgba(168,85,247,.2);color:var(--purple);}
+.bg-cafe{background:rgba(234,179,8,.2);color:var(--yellow);}
+.bg-trabalho{background:rgba(100,116,139,.2);color:var(--gray);}
+.bg-lanche{background:rgba(6,182,212,.2);color:var(--cyan);}
+.bg-sono{background:rgba(6,182,212,.15);color:var(--cyan);}
+.tc-title{font-size:14px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.tc-desc{font-size:12px;color:var(--gray);font-weight:300;margin-bottom:9px;}
+.ckbtn{width:100%;padding:9px;background:rgba(255,255,255,.04);border:1.5px dashed rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;transition:all .2s;user-select:none;-webkit-user-select:none;}
+.ckbtn:active{transform:scale(.97);}
+.ck .ckbtn{background:rgba(34,197,94,.1);border:1.5px solid rgba(34,197,94,.35);}
+.ckcircle{width:22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;font-size:12px;}
+.ck .ckcircle{background:var(--green);border-color:var(--green);}
+.cktxt{font-size:12px;font-weight:600;color:var(--gray);transition:all .2s;}
+.ck .cktxt{color:var(--green);}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;animation:fu .35s ease both;}
+.me{font-size:24px;flex-shrink:0;}
+.mn{font-size:14px;font-weight:600;color:var(--white);margin-bottom:1px;}
+.md{font-size:11px;color:var(--gray);font-weight:300;}
+.mq{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;flex-shrink:0;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;margin-bottom:9px;animation:fu .35s ease both;}
+.st{display:flex;align-items:center;gap:11px;margin-bottom:7px;}
+.si{font-size:24px;}
+.sn{font-size:14px;font-weight:600;color:var(--white);}
+.sb{font-size:11px;color:var(--gray);}
+.stags{display:flex;gap:5px;flex-wrap:wrap;}
+.stag{font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;}
+.sw{background:rgba(59,130,246,.15);color:var(--blue);}
+.sm{background:rgba(34,197,94,.15);color:var(--green);}
+.sf{background:rgba(249,115,22,.15);color:var(--orange);}
+.cgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px;animation:fu .35s ease both;}
+.ci{font-size:20px;margin-bottom:4px;}
+.cn{font-size:13px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.cm{font-size:11px;color:var(--gray);}
+.ct{font-size:10px;color:var(--cyan);margin-top:3px;}
+.lc{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px;margin-bottom:9px;animation:fu .35s ease both;}
+.lh{display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+.le{font-size:20px;}
+.lt{font-size:14px;font-weight:600;color:var(--white);}
+.lw{font-size:11px;color:var(--cyan);}
+.li{font-size:12px;color:var(--gray);display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.li::before{content:'•';color:var(--green);}
+.ob{background:linear-gradient(135deg,rgba(34,197,94,.1),rgba(59,130,246,.07));border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:13px 15px;margin-bottom:14px;display:flex;align-items:center;gap:11px;}
+.oi{font-size:24px;}
+.ot{font-size:14px;font-weight:600;color:var(--white);}
+.os{font-size:12px;color:var(--gray);margin-top:2px;}
+/* RAIO CHAT */
+.raio-hero{text-align:center;padding:20px 0 14px;}
+.raio-bolt{font-size:56px;animation:pulse 2s ease-in-out infinite;display:block;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.raio-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--yellow);margin-top:6px;}
+.raio-sub{font-size:12px;color:var(--gray);margin-top:3px;}
+.msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;min-height:60px;}
+.msg-u{align-self:flex-end;background:var(--blue);color:white;padding:10px 13px;border-radius:16px 16px 4px 16px;font-size:13px;max-width:82%;line-height:1.5;}
+.msg-r{align-self:flex-start;background:var(--card2);color:var(--white);padding:10px 13px;border-radius:16px 16px 16px 4px;font-size:13px;max-width:86%;line-height:1.5;border:1px solid var(--border);}
+.msg-r-name{color:var(--yellow);font-weight:700;font-size:11px;display:block;margin-bottom:3px;}
+.chat-bar{position:sticky;bottom:80px;background:var(--bg);padding:6px 0;}
+.chat-input-wrap{display:flex;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:9px 13px;}
+.chat-input{flex:1;background:none;border:none;outline:none;color:var(--white);font-size:14px;font-family:'Inter',sans-serif;}
+.chat-input::placeholder{color:var(--gray2);}
+.chat-send{background:var(--yellow);border:none;border-radius:10px;padding:7px 13px;font-size:13px;font-weight:700;color:#000;cursor:pointer;flex-shrink:0;}
+.quickqs{display:flex;gap:6px;margin-top:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.quickqs::-webkit-scrollbar{display:none;}
+.qq{flex-shrink:0;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 11px;font-size:11px;color:var(--gray);cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+/* BOTTOM NAV */
+
+.info-box{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:13px 15px;font-size:13px;color:var(--gray);line-height:1.75;margin-bottom:12px;}
+
+/* SPLASH */
+#splash{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease;}
+#splash.hide{opacity:0;pointer-events:none;}
+.sp-bolt{animation:spbolt 1s ease-in-out infinite alternate;}
+@keyframes spbolt{from{transform:scale(1);filter:drop-shadow(0 0 12px #ff4500) drop-shadow(0 0 20px #cc0000)}to{transform:scale(1.15);filter:drop-shadow(0 0 25px #ff6600) drop-shadow(0 0 40px #ff0000)}}
+.sp-ring{width:100px;height:100px;border-radius:50%;border:2px solid rgba(255,69,0,.15);border-top-color:#ff4500;animation:spin 1s linear infinite;position:absolute;}
+.sp-ring2{width:120px;height:120px;border-radius:50%;border:1px solid rgba(255,69,0,.08);border-bottom-color:rgba(255,69,0,.4);animation:spin 1.5s linear infinite reverse;position:absolute;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.sp-icon-wrap{position:relative;display:flex;align-items:center;justify-content:center;width:120px;height:120px;margin-bottom:28px;}
+.sp-title{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:#ff4500;letter-spacing:2px;margin-bottom:8px;text-shadow:0 0 20px rgba(255,69,0,.5);}
+.sp-sub{font-size:13px;color:var(--gray);font-weight:300;letter-spacing:1px;}
+.sp-bar-wrap{width:160px;height:3px;background:rgba(255,255,255,.08);border-radius:3px;margin-top:32px;overflow:hidden;}
+.sp-bar{height:100%;width:0%;background:linear-gradient(90deg,#ff4500,#cc0000);border-radius:3px;animation:spbar 2s ease forwards;}
+@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+@keyframes spbar{0%{width:0%}60%{width:70%}100%{width:100%}}
+
+
+/* ALBUM */
+
+.photo-viewer{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.97);z-index:600;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.photo-viewer.open{display:flex;}
+.photo-viewer img{max-width:100%;max-height:75vh;object-fit:contain;border-radius:12px;}
+.photo-viewer-caption{color:white;font-size:14px;font-weight:600;margin-top:14px;text-align:center;}
+.photo-viewer-date{color:var(--gray);font-size:12px;margin-top:4px;}
+.photo-viewer-close{position:absolute;top:50px;right:20px;background:rgba(255,255,255,.15);border:none;border-radius:50%;width:36px;height:36px;color:white;font-size:18px;cursor:pointer;}
+
+.album-upload{background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(6,182,212,.08));border:2px dashed rgba(59,130,246,.3);border-radius:16px;padding:20px;text-align:center;margin-bottom:16px;cursor:pointer;}
+.album-upload-icon{font-size:36px;margin-bottom:8px;}
+.album-upload-txt{font-size:14px;font-weight:600;color:var(--blue);}
+.album-upload-sub{font-size:12px;color:var(--gray);margin-top:4px;}
+.album-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.album-item{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;position:relative;animation:fu .35s ease both;}
+.album-img{width:100%;height:160px;object-fit:contain;display:block;border-radius:12px 12px 0 0;background:#0d1117;}
+.album-info{padding:8px 10px;}
+.album-caption{font-size:12px;font-weight:600;color:var(--white);margin-bottom:2px;}
+.album-date{font-size:10px;color:var(--gray);}
+.album-del{position:absolute;top:6px;right:6px;background:rgba(0,0,0,.6);border:none;border-radius:50%;width:24px;height:24px;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.album-empty{text-align:center;padding:40px 20px;color:var(--gray);}
+.album-empty-icon{font-size:48px;margin-bottom:12px;}
+.album-empty-txt{font-size:14px;font-weight:600;color:var(--gray2);}
+.album-empty-sub{font-size:12px;color:var(--gray2);margin-top:6px;}
+/* MODAL */
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal.open{display:flex;}
+.modal-box{background:var(--card2);border-radius:20px;padding:20px;width:100%;max-width:400px;}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:16px;text-align:center;}
+.modal-preview{width:100%;max-height:260px;object-fit:contain;border-radius:12px;margin-bottom:14px;display:none;background:var(--card);}
+.modal-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;color:var(--white);font-size:14px;font-family:'Inter',sans-serif;outline:none;margin-bottom:12px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-save{flex:1;background:var(--green);border:none;border-radius:12px;padding:12px;font-size:14px;font-weight:700;color:#000;cursor:pointer;}
+.modal-cancel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;font-size:14px;color:var(--gray);cursor:pointer;}
+
+
+/* HAMBURGER MENU */
+.hbtn{background:none;border:none;cursor:pointer;padding:4px;display:flex;flex-direction:column;gap:5px;justify-content:center;}
+.hbtn span{display:block;width:22px;height:2px;background:var(--white);border-radius:2px;transition:all .3s;}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--card2);z-index:200;transform:translateX(-100%);transition:transform .3s ease;border-right:1px solid var(--border);}
+.drawer.open{transform:translateX(0);}
+.drawer-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:199;display:none;}
+.drawer-overlay.open{display:block;}
+.drawer-header{padding:54px 20px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;}
+.drawer-logo{font-size:32px;}
+.drawer-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--yellow);}
+.drawer-sub{font-size:12px;color:var(--gray);}
+.drawer-menu{padding:16px 12px;}
+.drawer-item{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:12px;cursor:pointer;transition:background .2s;margin-bottom:4px;}
+.drawer-item:active,.drawer-item.active{background:rgba(255,255,255,.07);}
+.drawer-item .di{font-size:20px;width:28px;text-align:center;}
+.drawer-item .dl{font-size:14px;font-weight:500;color:var(--white);}
+.drawer-item.active .dl{color:var(--green);font-weight:600;}
+.drawer-item.raio-item.active .dl{color:var(--yellow);}
+.drawer-divider{height:1px;background:var(--border);margin:8px 12px;}
+
+
+/* LOGIN */
+#login-screen{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:8000;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;}
+.login-logo{font-size:72px;margin-bottom:12px;animation:pulse 2s ease-in-out infinite;}
+.login-title{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--yellow);margin-bottom:6px;}
+.login-sub{font-size:13px;color:var(--gray);margin-bottom:48px;text-align:center;line-height:1.6;}
+.login-btn{display:flex;align-items:center;gap:12px;background:white;color:#333;border:none;border-radius:14px;padding:14px 24px;font-size:15px;font-weight:600;cursor:pointer;width:100%;max-width:320px;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:transform .2s;}
+.login-btn:active{transform:scale(.97);}
+.login-btn img{width:22px;height:22px;}
+.login-loading{color:var(--gray);font-size:13px;margin-top:20px;}
+
+/* ONBOARDING */
+#onboarding{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:7000;display:none;flex-direction:column;}
+.ob-header{padding:54px 24px 20px;background:linear-gradient(180deg,#0d1526,var(--bg));}
+.ob-step-dots{display:flex;gap:6px;margin-bottom:16px;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .3s;}
+.ob-dot.active{background:var(--green);width:24px;border-radius:4px;}
+.ob-step-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--white);}
+.ob-step-sub{font-size:13px;color:var(--gray);margin-top:4px;}
+.ob-body{flex:1;overflow-y:auto;padding:20px 24px;}
+.ob-footer{padding:16px 24px 32px;background:var(--bg);}
+.ob-next{width:100%;padding:16px;background:var(--green);border:none;border-radius:16px;font-size:16px;font-weight:700;color:#000;cursor:pointer;font-family:'Inter',sans-serif;}
+.ob-next:disabled{background:var(--card2);color:var(--gray2);}
+.ob-field{margin-bottom:16px;}
+.ob-label{font-size:12px;font-weight:600;color:var(--gray);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px;}
+.ob-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;}
+.ob-input:focus{border-color:var(--green);}
+.ob-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.ob-chip{padding:9px 16px;border-radius:20px;background:var(--card);border:1px solid var(--border);color:var(--gray);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;}
+.ob-chip.sel{background:rgba(34,197,94,.15);border-color:var(--green);color:var(--green);}
+.ob-time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ob-time-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;}
+.ob-time-label{font-size:11px;color:var(--gray);margin-bottom:6px;}
+.ob-time-input{width:100%;background:none;border:none;color:var(--white);font-size:18px;font-weight:700;font-family:'Syne',sans-serif;outline:none;}
+
+/* USER HEADER */
+.user-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--green);}
+
+</style>
+
+</head>
+<body>
+<script>
+(function() {
+  var scripts = [
+    'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js',
+    'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js'
+  ];
+  var loaded = 0;
+  function onLoad() {
+    loaded++;
+    if (loaded === scripts.length && window.__firebaseReady) {
+      window.__firebaseReady();
+    }
+  }
+  scripts.forEach(function(src) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = onLoad;
+    s.onerror = function() { console.error('Falha ao carregar: ' + src); };
+    document.head.appendChild(s);
+  });
+})();
+</script>
+
+<div id="splash">
+  <div class="sp-icon-wrap">
+    <div class="sp-ring2"></div>
+    <div class="sp-ring"></div>
+    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9Ii0xNSAtMTUgMTUwIDE5MCIgd2lkdGg9IjkwIiBoZWlnaHQ9IjExNCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjYwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmY1NTAwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZGQwMDAwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6Izk5MDAwMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxmaWx0ZXIgaWQ9Imdsb3ciPgogICAgICA8ZmVHYXVzc2lhbkJsdXIgc3RkRGV2aWF0aW9uPSIzIiByZXN1bHQ9ImJsdXIiLz4KICAgICAgPGZlTWVyZ2U+PGZlTWVyZ2VOb2RlIGluPSJibHVyIi8+PGZlTWVyZ2VOb2RlIGluPSJTb3VyY2VHcmFwaGljIi8+PC9mZU1lcmdlPgogICAgPC9maWx0ZXI+CiAgPC9kZWZzPgogIDwhLS0gVGhpY2sgeWVsbG93IG91dGxpbmUgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSI3MiwyIDI4LDc4IDU4LDc4IDM4LDE1OCA5OCw1OCA2Miw1OCA5MiwyIgogICAgZmlsbD0iI0ZGRDcwMCIgc3Ryb2tlPSIjRkZENzAwIiBzdHJva2Utd2lkdGg9IjE2IiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPCEtLSBCbGFjayBzZXBhcmF0b3IgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSI3MiwyIDI4LDc4IDU4LDc4IDM4LDE1OCA5OCw1OCA2Miw1OCA5MiwyIgogICAgZmlsbD0iIzExMSIgc3Ryb2tlPSIjMTExIiBzdHJva2Utd2lkdGg9IjgiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KICA8IS0tIFJlZCBib2R5IC0tPgogIDxwb2x5Z29uIHBvaW50cz0iNzIsMiAyOCw3OCA1OCw3OCAzOCwxNTggOTgsNTggNjIsNTggOTIsMiIKICAgIGZpbGw9InVybCgjcmcpIiBmaWx0ZXI9InVybCgjZ2xvdykiLz4KICA8IS0tIFdoaXRlIHNoaW5lIC0tPgogIDxwb2x5Z29uIHBvaW50cz0iNzQsMTAgNTAsNjggNjIsNjggNTAsMTE4IDg0LDYwIDYyLDYwIDgwLDEwIgogICAgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjE4KSIvPgo8L3N2Zz4=" class="sp-bolt" style="width:80px;height:auto;animation:spbolt 1s ease-in-out infinite alternate;">
+  </div>
+  <div class="sp-title">RAIO</div>
+  <div class="sp-sub">Sua rotina de high performance</div>
+  <div id="sp-tap" style="margin-top:16px;font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px;animation:blink 1.2s ease-in-out infinite;">TOQUE PARA COMEÇAR</div>
+  <div class="sp-bar-wrap"><div class="sp-bar"></div></div>
+</div>
+
+<div class="app">
+  
+  
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+  <div class="login-logo">⚡</div>
+  <div class="login-title">RAIO</div>
+  <div class="login-sub">Seu app de high performance.<br>Entre com sua conta Google para começar.</div>
+  <button class="login-btn" onclick="loginGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg">
+    Entrar com Google
+  </button>
+  <div class="login-loading" id="login-loading"></div>
+</div>
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-header">
+    <div class="ob-step-dots" id="ob-dots"></div>
+    <div class="ob-step-title" id="ob-step-title"></div>
+    <div class="ob-step-sub" id="ob-step-sub"></div>
+  </div>
+  <div class="ob-body" id="ob-body"></div>
+  <div class="ob-footer">
+    <button class="ob-next" id="ob-next" onclick="obNext()">Continuar →</button>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+  <!-- DRAWER -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <div class="drawer-logo">⚡</div>
+      <div>
+        <div class="drawer-title">Raio</div>
+        <div class="drawer-sub">High Performance</div>
+      </div>
+    </div>
+    <div class="drawer-menu">
+      <div class="drawer-item active" data-tab="rotina" onclick="swDrawer('rotina')"><div class="di">📅</div><div class="dl">Rotina</div></div>
+      <div class="drawer-item" data-tab="cafe" onclick="swDrawer('cafe')"><div class="di">☕</div><div class="dl">Café da Manhã</div></div>
+      <div class="drawer-item" data-tab="lanches" onclick="swDrawer('lanches')"><div class="di">🥗</div><div class="dl">Lanches</div></div>
+      <div class="drawer-item" data-tab="marmitas" onclick="swDrawer('marmitas')"><div class="di">🍱</div><div class="dl">Marmitas</div></div>
+      <div class="drawer-item" data-tab="suple" onclick="swDrawer('suple')"><div class="di">💊</div><div class="dl">Suplementos</div></div>
+      <div class="drawer-divider"></div>
+      <div class="drawer-item" onclick="logout()" style="margin-top:8px"><div class="di">🚪</div><div class="dl" style="color:var(--orange)">Sair da conta</div></div>
+      <div class="drawer-divider"></div>
+      <div class="drawer-item raio-item" data-tab="raio" onclick="swDrawer('raio')"><div class="di">⚡</div><div class="dl">Raio — Assistente</div></div>
+      <div class="drawer-item" data-tab="versiculo" onclick="swDrawer('versiculo')"><div class="di">✝️</div><div class="dl">Palavra do Dia</div></div>
+      <div class="drawer-item" data-tab="album" onclick="swDrawer('album')"><div class="di">📸</div><div class="dl">Álbum de Treinos</div></div>
+      <div class="drawer-item" data-tab="semana" onclick="swDrawer('semana')"><div class="di">📊</div><div class="dl">Retrospectiva</div></div>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="header-top">
+      <button class="hbtn" onclick="toggleDrawer()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="greeting">Oi, <span>Matheus</span> 👋</div>
+      <div class="daybadge" id="daybadge"></div>
+    </div>
+    <div class="hsub">Futevôlei + Funcional + Performance</div>
+  </div>
+
+  <div class="scroll" id="scr">
+
+    <!-- ROTINA -->
+    <div class="view active" id="view-rotina">
+      <div class="dsel" id="dsel"></div>
+      <div class="pbar"><div class="pfill" id="pfill" style="width:0%"></div></div>
+      <div class="plbl"><span id="ptxt">0 de 0 feitos</span><span id="ppct">0%</span></div>
+      <div class="stitle">CHECKLIST DO DIA</div>
+      <div class="tl" id="tl"></div>
+    </div>
+
+    <!-- CAFE -->
+    <div class="view" id="view-cafe">
+      <div class="ob"><div class="oi">🎯</div><div><div class="ot">Perder gordura + Performance</div><div class="os">Café rico em proteína, baixo em carbo simples</div></div></div>
+      <div class="stitle">OPÇÕES DE CAFÉ DA MANHÃ</div>
+      <div class="cgrid">
+        <div class="cc"><div class="ci">🥚</div><div class="cn">Ovos mexidos</div><div class="cm">3 ovos • ~18g proteína</div><div class="ct">Com azeite ou manteiga</div></div>
+        <div class="cc"><div class="ci">🫙</div><div class="cn">Iogurte grego</div><div class="cm">~17g proteína • sem açúcar</div><div class="ct">Com granola ou fruta</div></div>
+        <div class="cc"><div class="ci">🥑</div><div class="cn">Pão integral + abacate</div><div class="cm">Gordura boa + fibra</div><div class="ct">1 fatia apenas</div></div>
+        <div class="cc"><div class="ci">🍌</div><div class="cn">Banana + amendoim</div><div class="cm">Energia pré-treino</div><div class="ct">Pasta de amendoim</div></div>
+        <div class="cc"><div class="ci">🧀</div><div class="cn">Queijo + frios</div><div class="cm">Proteína + gordura boa</div><div class="ct">Minas, ricota ou cottage</div></div>
+        <div class="cc"><div class="ci">🥤</div><div class="cn">Shake de whey</div><div class="cm">20g proteína rápida</div><div class="ct">Com leite ou água + fruta</div></div>
+      </div>
+      <div class="stitle">DIAS DE FUNCIONAL (TER/QUI — ACORDA 6H)</div>
+      <div class="cgrid">
+        <div class="cc" style="border-color:rgba(59,130,246,.3)"><div class="ci">🍌</div><div class="cn">Antes do treino</div><div class="cm">Banana + café preto</div><div class="ct">Leve e rápido</div></div>
+        <div class="cc" style="border-color:rgba(34,197,94,.3)"><div class="ci">🥚</div><div class="cn">Pós treino (8h)</div><div class="cm">Ovos + whey protein</div><div class="ct">Recuperação muscular</div></div>
+      </div>
+      <div class="info-box">💡 <strong style="color:var(--white)">Não pule o café!</strong> Sua rotina é intensa e seu corpo precisa de combustível.<br>✅ Priorize <strong style="color:var(--green)">proteína de manhã</strong> para preservar massa e controlar fome.<br>🚫 Evite pão branco e suco de caixinha — geram pico de insulina.</div>
+    </div>
+
+    <!-- LANCHES -->
+    <div class="view" id="view-lanches">
+      <div class="ob"><div class="oi">⏰</div><div><div class="ot">Lanches entre refeições</div><div class="os">A cada ~3h para manter energia</div></div></div>
+      <div class="stitle">MANHÃ (~10H30)</div>
+      <div class="lc"><div class="lh"><div class="le">🍎</div><div><div class="lt">Lanche leve da manhã</div><div class="lw">~10h30</div></div></div><div class="li">1 fruta (maçã, pera, laranja ou banana)</div><div class="li">1 punhado de castanhas ou amendoim</div><div class="li">Café preto sem açúcar (opcional)</div></div>
+      <div class="stitle">TARDE (PRÉ-TREINO FUTEVÔLEI)</div>
+      <div class="lc"><div class="lh"><div class="le">💪</div><div><div class="lt">Pré-treino da tarde</div><div class="lw">~1h antes do futevôlei</div></div></div><div class="li">1 banana + pasta de amendoim</div><div class="li">Ou: tapioca com ovo e queijo</div><div class="li">Água ou água de coco</div></div>
+      <div class="lc" style="border-color:rgba(168,85,247,.25)"><div class="lh"><div class="le">🟣</div><div><div class="lt">Pré funcional (Ter/Qui)</div><div class="lw">Antes das 6h30</div></div></div><div class="li">Banana + Exquenta Pré Treino</div><div class="li">Ou só o pré-treino em jejum leve</div><div class="li">Evite comer pesado antes</div></div>
+      <div class="stitle">NOITE (PÓS-TREINO)</div>
+      <div class="lc"><div class="lh"><div class="le">🌙</div><div><div class="lt">Pós-treino noturno</div><div class="lw">Logo após o treino</div></div></div><div class="li">Whey Protein +Mu (Paçoquita ou Choc. Avelã)</div><div class="li">Com água ou leite desnatado</div><div class="li">Se fome: marmita leve ou ovo cozido</div></div>
+      <div class="lc" style="border-color:rgba(234,179,8,.2)"><div class="lh"><div class="le">😴</div><div><div class="lt">Antes de dormir (opcional)</div><div class="lw">Se sentir fome</div></div></div><div class="li">Iogurte grego natural sem açúcar</div><div class="li">Ou cottage com canela</div><div class="li">Proteína lenta = recuperação noturna</div></div>
+      <div class="stitle">EVITE NOS INTERVALOS</div>
+      <div class="info-box" style="background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2);">❌ Biscoito recheado / bolacha salgada<br>❌ Suco de caixinha / refrigerante<br>❌ Salgadinhos de pacote<br>❌ Barrinha de cereal com muito açúcar<br>❌ Pular refeições — principalmente pré-treino</div>
+    </div>
+
+    <!-- MARMITAS -->
+    <div class="view" id="view-marmitas">
+      <div class="ob"><div class="oi">🍱</div><div><div class="ot">Mom Foods — Estoque total</div><div class="os">Dividido entre você e sua noiva 💑</div></div></div>
+      <div class="stitle">VOCÊ 💙</div>
+      <div id="mg-eu"></div>
+      <div class="stitle">SUA NOIVA 💗</div>
+      <div id="mg-noiva"></div>
+    </div>
+
+    <!-- SUPLEMENTOS -->
+    <div class="view" id="view-suple">
+      <div class="ob"><div class="oi">💊</div><div><div class="ot">Linha +Mu — Seus suplementos</div><div class="os">Como e quando usar cada um</div></div></div>
+      <div id="sg"></div>
+    </div>
+
+    <!-- RAIO -->
+    <div class="view" id="view-raio">
+      <div class="raio-hero">
+        <span class="raio-bolt">⚡</span>
+        <div class="raio-name">Raio</div>
+        <div class="raio-sub">Seu parceiro de high performance</div>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="chat-bar">
+        <div class="chat-input-wrap">
+          <input class="chat-input" id="ci" type="text" placeholder="Pergunta pro Raio...">
+          <button class="chat-send" id="csend">Enviar</button>
+        </div>
+        <div class="quickqs">
+          <div class="qq" onclick="qk(this)">Posso tomar 2 pré-treinos?</div>
+          <div class="qq" onclick="qk(this)">O que comer pós-treino?</div>
+          <div class="qq" onclick="qk(this)">Quando tomar o whey?</div>
+          <div class="qq" onclick="qk(this)">Hidratação no treino?</div>
+          <div class="qq" onclick="qk(this)">Devo treinar em jejum?</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- VERSICULO -->
+    <div class="view" id="view-versiculo"></div>
+
+    <!-- ALBUM -->
+    <div class="view" id="view-album">
+      <div style="text-align:center;padding:20px 0 14px;">
+        <div style="font-size:36px;margin-bottom:8px;">📸</div>
+        <div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800;color:var(--white);">Álbum de Treinos</div>
+        <div style="font-size:12px;color:var(--gray);margin-top:4px;">Seus registros de performance</div>
+      </div>
+      <div class="album-upload" onclick="document.getElementById('album-file').click()">
+        <div class="album-upload-icon">📷</div>
+        <div class="album-upload-txt">Adicionar foto</div>
+        <div class="album-upload-sub">Toque para escolher da galeria ou tirar foto</div>
+      </div>
+      <input type="file" id="album-file" accept="image/*" style="display:none" onchange="albumPickPhoto(this)">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gray2);margin-bottom:10px;" id="album-count"></div>
+      <div class="album-grid" id="album-grid"></div>
+    </div>
+
+    <!-- MODAL LEGENDA -->
+    <div class="modal" id="album-modal">
+      <div class="modal-box">
+        <div class="modal-title">📸 Salvar foto</div>
+        <img id="modal-preview" class="modal-preview">
+        <input class="modal-input" id="modal-caption" type="text" placeholder="Legenda (ex: Treino funcional 💪)">
+        <div class="modal-btns">
+          <button class="modal-cancel" onclick="albumCloseModal()">Cancelar</button>
+          <button class="modal-save" onclick="albumSavePhoto()">Salvar no álbum ✅</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PHOTO VIEWER -->
+    <div class="photo-viewer" id="photo-viewer" onclick="closeViewer()">
+      <button class="photo-viewer-close" onclick="closeViewer()">✕</button>
+      <img id="viewer-img" src="">
+      <div class="photo-viewer-caption" id="viewer-caption"></div>
+      <div class="photo-viewer-date" id="viewer-date"></div>
+    </div>
+
+
+    <!-- SEMANA -->
+    <div class="view" id="view-semana"></div>
+
+  </div><!-- /scroll -->
+
+  
+</div>
+
+<script>
+var DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+var FULL = ['Domingo','Segunda-feira','Terca-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sabado'];
+
+var schedule = {
+  0: [
+    {h:'',ti:'Dia livre',de:'Descanse e recupere-se!',tp:'',bg:'trabalho',bl:'DESCANSO'},
+    {h:'',ti:'Hidratacao extra',de:'Pelo menos 2L de agua hoje',tp:'',bg:'lanche',bl:'SAUDE'},
+    {h:'23:00',ti:'Hora de dormir',de:'8h de sono - acorda descansado amanha',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  1: [
+    {h:'07:00',ti:'Acordar',de:'Beba 1 copo de agua ao acordar',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'07:15',ti:'Cafe da manha',de:'Ovos + fruta + cafe preto',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'09:00',ti:'Inicio do trabalho',de:'Foco total ate o almoco',tp:'',bg:'trabalho',bl:'TRABALHO'},
+    {h:'10:30',ti:'Lanche da manha',de:'Fruta + castanhas',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'13:00',ti:'Almoco - Marmita',de:'Mom Foods - escolha sua marmita',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'17:30',ti:'Pre-treino',de:'Banana + Exquenta Pre Treino',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'19:00',ti:'Futevolei',de:'Treino ate as 20h - vai com tudo!',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'20:15',ti:'Whey Protein',de:'+Mu Pacoquita ou Choc. Avela',tp:'suple',bg:'suple',bl:'POS-TREINO'},
+    {h:'20:30',ti:'Janta - Marmita',de:'Marmita leve ou refeicao em casa',tp:'refeicao',bg:'refeicao',bl:'JANTA'},
+    {h:'22:00',ti:'Hora de dormir',de:'8h de sono - acorda 06:00 terca pro funcional',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  2: [
+    {h:'06:00',ti:'Acordar',de:'Dia de funcional! Beba agua antes de sair',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'06:20',ti:'Pre funcional',de:'Banana + Exquenta (ou jejum leve)',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'07:00',ti:'Treino Funcional',de:'Foco total ate as 8h',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'08:15',ti:'Cafe pos funcional',de:'Ovos + whey - recuperacao muscular!',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'09:00',ti:'Trabalho',de:'Trabalho em casa',tp:'',bg:'trabalho',bl:'TRABALHO'},
+    {h:'10:30',ti:'Lanche da manha',de:'Fruta + iogurte grego',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'13:00',ti:'Almoco - Marmita',de:'Mom Foods - escolha sua marmita',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'19:00',ti:'Pre-treino',de:'Banana + Exquenta Pre Treino',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'20:00',ti:'Futevolei',de:'Segundo treino do dia - ate 21h!',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'21:15',ti:'Whey Protein',de:'+Mu - essencial hoje! Dois treinos!',tp:'suple',bg:'suple',bl:'POS-TREINO'},
+    {h:'21:30',ti:'Janta - Marmita',de:'Marmita leve ou refeicao em casa',tp:'refeicao',bg:'refeicao',bl:'JANTA'},
+    {h:'23:00',ti:'Hora de dormir',de:'8h de sono - acorda 07:00 quarta',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  3: [
+    {h:'07:00',ti:'Acordar',de:'Beba 1 copo de agua ao acordar',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'07:15',ti:'Cafe da manha',de:'Ovos + fruta + cafe preto',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'09:00',ti:'Trabalho',de:'Foco total ate o almoco',tp:'',bg:'trabalho',bl:'TRABALHO'},
+    {h:'10:30',ti:'Lanche da manha',de:'Fruta + castanhas ou iogurte',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'13:00',ti:'Almoco - Marmita',de:'Mom Foods - escolha sua marmita',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'17:30',ti:'Pre-treino',de:'Banana + Exquenta Pre Treino',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'19:00',ti:'Futevolei',de:'Treino ate as 20h',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'20:15',ti:'Whey Protein',de:'+Mu Pacoquita ou Choc. Avela',tp:'suple',bg:'suple',bl:'POS-TREINO'},
+    {h:'20:30',ti:'Janta - Marmita',de:'Marmita ou refeicao em casa',tp:'refeicao',bg:'refeicao',bl:'JANTA'},
+    {h:'22:00',ti:'Hora de dormir',de:'8h de sono - acorda 06:00 quinta pro funcional',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  4: [
+    {h:'06:00',ti:'Acordar',de:'Dia de funcional! Beba agua antes de sair',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'06:20',ti:'Pre funcional',de:'Banana + Exquenta (ou jejum leve)',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'07:00',ti:'Treino Funcional',de:'Foco total ate as 8h',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'08:15',ti:'Cafe pos funcional',de:'Ovos + whey - recuperacao muscular!',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'09:00',ti:'Trabalho',de:'Trabalho em casa',tp:'',bg:'trabalho',bl:'TRABALHO'},
+    {h:'10:30',ti:'Lanche da manha',de:'Fruta + castanhas',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'13:00',ti:'Almoco - Marmita',de:'Mom Foods - escolha sua marmita',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'18:00',ti:'Pre-treino',de:'Banana + Exquenta Pre Treino',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'19:00',ti:'Futevolei',de:'Segundo treino do dia - ate 20h!',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'20:15',ti:'Whey Protein',de:'+Mu - essencial hoje! Dois treinos!',tp:'suple',bg:'suple',bl:'POS-TREINO'},
+    {h:'20:30',ti:'Janta - Marmita',de:'Marmita leve ou refeicao em casa',tp:'refeicao',bg:'refeicao',bl:'JANTA'},
+    {h:'23:00',ti:'Hora de dormir',de:'8h de sono - acorda 07:00 sexta',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  5: [
+    {h:'07:00',ti:'Acordar',de:'Hidrate-se! Comeca bem o dia',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'07:15',ti:'Cafe da manha',de:'Ovos + fruta + cafe preto',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'09:00',ti:'Trabalho',de:'Foco ate as 18h',tp:'',bg:'trabalho',bl:'TRABALHO'},
+    {h:'10:30',ti:'Lanche da manha',de:'Fruta + castanhas',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'13:00',ti:'Almoco - Marmita',de:'Mom Foods - escolha sua marmita',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'15:30',ti:'Lanche da tarde',de:'Iogurte grego ou whey + fruta',tp:'lanche',bg:'lanche',bl:'LANCHE'},
+    {h:'18:00',ti:'Fim do trabalho',de:'Day use hoje? Hora do pre-treino!',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'20:30',ti:'Janta - Marmita',de:'Marmita ou refeicao saudavel',tp:'refeicao',bg:'refeicao',bl:'JANTA'},
+    {h:'23:00',ti:'Hora de dormir',de:'8h de sono - acorda 07:00 sabado',tp:'sono',bg:'sono',bl:'SONO'}
+  ],
+  6: [
+    {h:'07:00',ti:'Acordar',de:'Dia de jogo! Hidrate bem antes de sair',tp:'',bg:'trabalho',bl:'ROTINA'},
+    {h:'07:15',ti:'Cafe reforcado',de:'Ovos + banana + cafe - energia pro jogo!',tp:'refeicao',bg:'cafe',bl:'CAFE'},
+    {h:'07:40',ti:'Pre-treino',de:'Exquenta Pre Treino - 20 min antes',tp:'suple',bg:'suple',bl:'PRE-TREINO'},
+    {h:'08:00',ti:'Futevolei - Jogo',de:'Jogo ate 12h30 - hidrate sempre!',tp:'treino',bg:'treino',bl:'TREINO'},
+    {h:'12:30',ti:'Whey Protein',de:'+Mu assim que terminar o jogo',tp:'suple',bg:'suple',bl:'POS-TREINO'},
+    {h:'13:00',ti:'Almoco especial',de:'Marmita caprichada ou refeicao livre',tp:'refeicao',bg:'refeicao',bl:'ALMOCO'},
+    {h:'23:00',ti:'Hora de dormir',de:'8h de sono - descansado para a semana',tp:'sono',bg:'sono',bl:'SONO'}
+  ]
+};
+
+var marmitas = [
+  {e:'🍗',n:'Frango cremoso',d:'Arroz integral e mix de vegetais',q:4},
+  {e:'🥩',n:'Strogonoff',d:'Arroz e batata assada',q:4},
+  {e:'🍖',n:'Patinho',d:'Arroz e feijao',q:4},
+  {e:'🫕',n:'Fricasse',d:'Arroz e brocolis',q:4},
+  {e:'🍯',n:'Frango honey',d:'Pure de batata e farofinha',q:4},
+  {e:'🥣',n:'Carne desfiada',d:'Arroz, feijao carioca e farofinha',q:4},
+  {e:'🍝',n:'Talharim bolonhesa',d:'Massa com molho',q:4},
+  {e:'🍛',n:'Parmegiana',d:'Arroz e batata assada',q:6},
+  {e:'🍗',n:'Delicia de frango',d:'Preparo especial Mom Foods',q:4},
+  {e:'🥔',n:'Batatas',d:'Acompanhamento',q:4},
+  {e:'🫙',n:'Escondidinho',d:'Classico reconfortante',q:4}
+];
+
+var suplementos = [
+  {i:'🥛',n:'Whey Protein Pacoquita',b:'+Mu - 450g - 20g proteina/dose',tags:[{l:'Pos-treino',c:'sw'},{l:'20g proteina',c:'sm'},{l:'Pacoquita',c:'sf'}],t:'Tome logo apos o treino com agua ou leite. Em dias de dois treinos, priorize apos o mais pesado.'},
+  {i:'🍫',n:'Whey Protein Choc. Avela',b:'+Mu - 450g - 20g proteina/dose',tags:[{l:'Pos-treino',c:'sw'},{l:'20g proteina',c:'sm'},{l:'Chocolate Avela',c:'sf'}],t:'Alterne os sabores para nao enjoar. Pode usar como lanche antes de dormir.'},
+  {i:'⚡',n:'Exquenta Pre Treino sache',b:'+Mu - 150mg cafeina - Amora e Melancia',tags:[{l:'30min antes',c:'sw'},{l:'150mg cafeina',c:'sm'},{l:'Amora e Melancia',c:'sf'}],t:'Ideal para treinos eventuais ou dia de grande esforco. Sache = 1 dose individual pratica.'},
+  {i:'🍋',n:'Exquenta Pre Treino pote',b:'+Mu - 500g - 25 doses - Pink Lemonade',tags:[{l:'30min antes',c:'sw'},{l:'150mg cafeina',c:'sm'},{l:'Pink Lemonade',c:'sf'}],t:'Seu pre-treino principal. Use 30 min antes do futevolei ou funcional. Evite apos 19h se tiver dificuldade para dormir.'},
+  {i:'🟠',n:'Exquenta Nitrato',b:'+Mu - 450g - 15 doses - Laranja e Acerola - SEM cafeina',tags:[{l:'Pre e Intra treino',c:'sw'},{l:'24g carbo/dose',c:'sm'},{l:'Sem cafeina',c:'sf'}],t:'Otimo para treinos noturnos (sem cafeina = nao atrapalha o sono). Use durante o treino longo de sabado para manter energia.'}
+];
+
+var selDay = new Date().getDay();
+var checked = {};
+try { checked = JSON.parse(localStorage.getItem('rc') || '{}'); } catch(e) { checked = {}; }
+var marmitasRendered = false;
+var supleRendered = false;
+var raioHistory = [];
+
+function init() {
+  var now = new Date();
+  var dname = ['Domingo','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
+  document.getElementById('daybadge').textContent = dname[now.getDay()] + ', ' + now.getDate() + '/' + (now.getMonth()+1);
+  renderDays();
+  renderTl();
+}
+
+function renderDays() {
+  var el = document.getElementById('dsel');
+  el.innerHTML = '';
+  var today = new Date();
+  var todayDow = today.getDay();
+  for (var i = 0; i < 7; i++) {
+    var diff = i - todayDow;
+    var d = new Date(today);
+    d.setDate(today.getDate() + diff);
+    var btn = document.createElement('div');
+    btn.className = 'dbtn' + (i === selDay ? ' active' : '');
+    btn.setAttribute('data-day', i);
+    btn.innerHTML = '<div class="dn">' + DAYS[i] + '</div><div class="dd">' + (i === todayDow ? 'HOJE' : d.getDate()) + '</div>';
+    btn.onclick = function() {
+      selDay = parseInt(this.getAttribute('data-day'));
+      renderDays();
+      renderTl();
+    };
+    el.appendChild(btn);
+  }
+}
+
+function renderTl() {
+  var tl = document.getElementById('tl');
+  var items = schedule[selDay] || [];
+  var key = 'k' + selDay;
+  if (!checked[key]) checked[key] = {};
+  tl.innerHTML = '';
+  var done = 0;
+  for (var i = 0; i < items.length; i++) {
+    var item = items[i];
+    var isck = !!checked[key][i];
+    if (isck) done++;
+    var div = document.createElement('div');
+    div.className = 'ti';
+    var dotClass = 'tdot' + (item.tp ? ' ' + item.tp : '') + (isck ? ' done' : '');
+    div.innerHTML = '<div class="' + dotClass + '"></div>' +
+      '<div class="tc' + (isck ? ' ck' : '') + '">' +
+        '<div class="tc-top">' +
+          '<div class="tc-time">' + item.h + '</div>' +
+          '<div class="tbg bg-' + item.bg + '">' + item.bl + '</div>' +
+        '</div>' +
+        '<div class="tc-title">' + item.ti + '</div>' +
+        '<div class="tc-desc">' + item.de + '</div>' +
+        '<div class="ckbtn" data-idx="' + i + '" onclick="tck(this)">' +
+          '<div class="ckcircle">' + (isck ? '✓' : '') + '</div>' +
+          '<div class="cktxt">' + (isck ? 'Feito! Toque para desfazer' : 'Toque para marcar como feito') + '</div>' +
+        '</div>' +
+      '</div>';
+    tl.appendChild(div);
+  }
+  var pct = items.length ? Math.round(done / items.length * 100) : 0;
+  document.getElementById('pfill').style.width = pct + '%';
+  document.getElementById('ptxt').textContent = done + ' de ' + items.length + ' feitos';
+  document.getElementById('ppct').textContent = pct + '%';
+}
+
+function tck(btn) {
+  var idx = parseInt(btn.getAttribute('data-idx'));
+  var key = 'k' + selDay;
+  if (!checked[key]) checked[key] = {};
+  checked[key][idx] = !checked[key][idx];
+  try { localStorage.setItem('rc', JSON.stringify(checked)); } catch(e) {}
+  renderTl();
+}
+
+function renderMarmitas() {
+  if (marmitasRendered) return;
+  marmitasRendered = true;
+  var geu = document.getElementById('mg-eu');
+  var gno = document.getElementById('mg-noiva');
+  for (var i = 0; i < marmitas.length; i++) {
+    var m = marmitas[i];
+    var half = Math.floor(m.q / 2);
+    var html = '<div class="mc"><div class="me">' + m.e + '</div><div style="flex:1"><div class="mn">' + m.n + '</div><div class="md">' + m.d + '</div></div><div class="mq" style="color:COLOR">' + half + 'x</div></div>';
+    geu.innerHTML += html.replace('COLOR', 'var(--blue)');
+    gno.innerHTML += html.replace('COLOR', '#ec4899');
+  }
+}
+
+function renderSuple() {
+  if (supleRendered) return;
+  supleRendered = true;
+  var sg = document.getElementById('sg');
+  for (var i = 0; i < suplementos.length; i++) {
+    var s = suplementos[i];
+    var tags = '';
+    for (var j = 0; j < s.tags.length; j++) {
+      tags += '<span class="stag ' + s.tags[j].c + '">' + s.tags[j].l + '</span>';
+    }
+    sg.innerHTML += '<div class="sc"><div class="st"><div class="si">' + s.i + '</div><div><div class="sn">' + s.n + '</div><div class="sb">' + s.b + '</div></div></div><div class="stags">' + tags + '</div><div style="margin-top:9px;font-size:12px;color:var(--gray);line-height:1.6;padding:9px;background:rgba(255,255,255,.03);border-radius:9px;">&#128161; ' + s.t + '</div></div>';
+  }
+}
+
+function sw(tab) {
+  var tabs = ['rotina','cafe','lanches','marmitas','suple','raio','versiculo','album','semana'];
+  document.querySelectorAll('.tab').forEach(function(t, i) { t.classList.toggle('active', tabs[i] === tab); });
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  document.getElementById('view-' + tab).classList.add('active');
+  document.querySelectorAll('.nb').forEach(function(b, i) { b.classList.toggle('active', tabs[i] === tab); });
+  document.getElementById('scr').scrollTop = 0;
+  if (tab === 'marmitas') renderMarmitas();
+  if (tab === 'suple') renderSuple();
+  if (tab === 'versiculo') renderVersiculo();
+  if (tab === 'album') albumRender();
+  if (tab === 'semana') renderSemana();
+  if (tab === 'raio' && raioHistory.length === 0) {
+    addMsg('Fala, Matheus! Sou o Raio, seu parceiro de high performance. Pode perguntar sobre treino, nutricao, suplementos — to aqui! ⚡', false);
+  }
+}
+
+// RAIO CHAT
+var respostas = [
+  {
+    keys: ['2 pre','dois pre','pre treino duplo','tomar 2','tomar dois'],
+    r: '⚡ Otima pergunta! Na terca e quinta voce tem dois treinos — funcional de manha e futevolei a noite. O ideal e usar o Exquenta Nitrato (sem cafeina) no funcional das 7h, e guardar o Exquenta Pre Treino (com cafeina) para o futevolei a noite. Assim voce nao sobrecarrega de cafeina e mantem a energia nos dois treinos!'
+  },
+  {
+    keys: ['pos treino','apos treino','depois do treino','comer depois'],
+    r: '💪 Pós-treino e o momento mais importante! Tome o Whey Protein +Mu em ate 30 minutos apos o treino — mistura com agua ou leite. Se tiver com fome, complementa com uma marmita leve ou ovos. Nos dias de dois treinos (ter/qui), nao pule o pos-treino de jeito nenhum!'
+  },
+  {
+    keys: ['whey','proteina','quando tomar'],
+    r: '🥛 O Whey +Mu deve ser tomado logo apos o treino para maximizar a recuperacao muscular. Voce tem dois sabores — Pacoquita e Chocolate Avela — alterne para nao enjoar! Pode usar tambem antes de dormir nos dias mais puxados como lanche proteico noturno.'
+  },
+  {
+    keys: ['hidrat','agua','beber','intra treino'],
+    r: '💧 Hidratacao e fundamental para performance! Regra basica: 500ml antes do treino, goles frequentes durante, e 500ml apos. No jogo de sabado (4h30 de atividade!) beba agua de coco tambem para repor eletrolitos. O Exquenta Nitrato e ótimo pra usar durante treinos longos!'
+  },
+  {
+    keys: ['jejum','treinar sem comer','em jejum'],
+    r: '🍌 Para o funcional das 7h (ter/qui), uma banana antes ja e suficiente — treino em jejum total pode prejudicar a performance. Para o futevolei, sempre faz o pre-treino com o Exquenta. Com seu objetivo de perder gordura + performance, alimentacao pre-treino e essencial!'
+  },
+  {
+    keys: ['dormir','sono','descanso','recuper'],
+    r: '😴 Sono e quando seu corpo realmente evolui! Com sua rotina intensa, 8h e o minimo. Nas segundas e quartas, deita as 22h para acordar as 6h no dia seguinte pro funcional. Nos outros dias, 23h esta otimo. Evite o pre-treino com cafeina apos 19h para nao atrapalhar o sono.'
+  },
+  {
+    keys: ['emagrecer','perder gordura','cortar','dieta','calorias'],
+    r: '🎯 Para perder gordura mantendo performance: priorize proteinas em todas as refeicoes (ovos, whey, marmitas), evite carbos simples (pao branco, suco, refrigerante), e nunca pule refeicoes antes dos treinos. Com a sua rotina de futevolei + funcional, o deficit calorico vem naturalmente!'
+  },
+  {
+    keys: ['marmita','mom foods','almoco','janta'],
+    r: '🍱 Suas marmitas Mom Foods sao otimas escolhas! Para almoco pre-treino, prefira as opcoes com arroz integral e proteina (frango cremoso, patinho, fricasse). Para janta pos-treino, qualquer uma serve — mas evite comer demais se for dormir em seguida. Voce tem 11 opcoes diferentes, varie sempre!'
+  },
+  {
+    keys: ['cafe da manha','breakfast','manha','acordar'],
+    r: '☕ Com sua rotina intensa, nao pule o cafe! Priorize proteina: 3 ovos mexidos + cafe preto e a combinacao perfeita. Nos dias de funcional (ter/qui), so uma banana antes do treino e o cafe completo apos (ovos + whey). Evite pao branco e suco de caixinha — prejudicam a queima de gordura!'
+  },
+  {
+    keys: ['nitrato','exquenta nitrato','laranja','acerola','sem cafeina'],
+    r: '🟠 O Exquenta Nitrato e perfeito para voce! Sem cafeina, entao pode usar nos treinos noturnos sem prejudicar o sono. Com 24g de carbo por dose, e excelente como intra-treino no jogo longo de sabado. Use pre ou durante o treino para manter energia sem o risco de ficar acelerado a noite!'
+  },
+  {
+    keys: ['sabado','jogo','sabado'],
+    r: '🏐 Sabado e o dia mais puxado — 4h30 de futevolei! Estrategia: cafe reforcado as 7h15 (ovos + banana), Exquenta Pre Treino as 7h40, durante o jogo usa o Exquenta Nitrato para manter energia, e assim que terminar toma o Whey imediatamente. Hidratacao constante durante todo o jogo!'
+  }
+];
+
+function getResposta(txt) {
+  var lower = txt.toLowerCase();
+  for (var i = 0; i < respostas.length; i++) {
+    var r = respostas[i];
+    for (var j = 0; j < r.keys.length; j++) {
+      if (lower.indexOf(r.keys[j]) !== -1) {
+        return r.r;
+      }
+    }
+  }
+  return '⚡ Boa pergunta, Matheus! Infelizmente nao tenho uma resposta especifica para isso agora. Mas posso te ajudar com: pre-treino, pos-treino, hidratacao, sono, marmitas, suplementos e estrategia de emagrecimento. Qual dessas quer saber mais?';
+}
+
+function addMsg(txt, isUser) {
+  var msgs = document.getElementById('msgs');
+  var div = document.createElement('div');
+  div.className = isUser ? 'msg-u' : 'msg-r';
+  if (!isUser) {
+    div.innerHTML = '<span class="msg-r-name">⚡ RAIO</span>' + txt;
+  } else {
+    div.textContent = txt;
+  }
+  msgs.appendChild(div);
+  setTimeout(function() {
+    var scr = document.getElementById('scr');
+    scr.scrollTop = scr.scrollHeight;
+  }, 100);
+}
+
+function qk(btn) {
+  document.getElementById('ci').value = btn.textContent;
+  sendMsg();
+}
+
+function sendMsg() {
+  var input = document.getElementById('ci');
+  var txt = input.value.trim();
+  if (!txt) return;
+  input.value = '';
+  addMsg(txt, true);
+  var msgs = document.getElementById('msgs');
+  var loading = document.createElement('div');
+  loading.className = 'msg-r';
+  loading.id = 'rloading';
+  loading.innerHTML = '<span class="msg-r-name">⚡ RAIO</span>Pensando...';
+  msgs.appendChild(loading);
+  setTimeout(function() {
+    var scr = document.getElementById('scr');
+    scr.scrollTop = scr.scrollHeight;
+  }, 100);
+  setTimeout(function() {
+    var ld = document.getElementById('rloading');
+    if (ld) ld.remove();
+    var resposta = getResposta(txt);
+    addMsg(resposta, false);
+  }, 900);
+}
+
+document.getElementById('csend').onclick = sendMsg;
+document.getElementById('ci').onkeydown = function(e) { if (e.key === 'Enter') sendMsg(); };
+
+
+
+
+
+
+// Toca no primeiro toque do usuário
+document.addEventListener('touchstart', function() { hideSplash(); }, {once: true});
+document.addEventListener('click', function() { hideSplash(); }, {once: true});
+
+// SPLASH
+function hideSplash() {
+  var s = document.getElementById('splash');
+  if (s && !s.classList.contains('hide')) {
+    s.classList.add('hide');
+    setTimeout(function() { s.style.display = 'none'; }, 700);
+  }
+}
+
+// Auto hide after 3.5s even without touch
+setTimeout(hideSplash, 3500);
+
+
+var versiculos = [
+  {ref:"Filipenses 4:13", txt:"Tudo posso naquele que me fortalece.", exp:"Deus nao nos chama para o facil, mas promete estar conosco em cada desafio. Sua forca nao vem de voce — vem Dele. Hoje, enfrente o dia sabendo que nao esta sozinho."},
+  {ref:"Jeremias 29:11", txt:"Porque eu sei os planos que tenho para voces, diz o Senhor, planos de prosperidade e nao de calamidade, planos de dar a voces um futuro e uma esperanca.", exp:"Deus tem um proposito especifico para sua vida. Mesmo nos momentos de incerteza, confie que o Autor da sua historia ja escreveu um final glorioso."},
+  {ref:"Isaias 40:31", txt:"Mas os que esperam no Senhor renovam as suas forcas. Voam alto como aguias; correm e nao ficam exaustos, caminham e nao se cansam.", exp:"A espera em Deus nao e passividade — e uma recarga espiritual. Como aguias que usam o vento para voar mais alto, nos usamos a fe para superar qualquer obstaculo."},
+  {ref:"Salmos 23:1", txt:"O Senhor e o meu pastor; nada me faltara.", exp:"Quando Deus e seu pastor, voce e cuidado, guiado e protegido. Nao porque voce merece, mas porque Ele e bom. Descanse nessa certeza hoje."},
+  {ref:"Romanos 8:28", txt:"Sabemos que todas as coisas cooperam para o bem daqueles que amam a Deus.", exp:"Nao apenas as coisas boas — TODAS as coisas. As dificuldades, as decepcoes, os atrasos... Deus usa tudo para moldar algo precioso em voce."},
+  {ref:"Josue 1:9", txt:"Seja forte e corajoso! Nao se apavore nem desanime, pois o Senhor, o seu Deus, estara com voce por onde voce andar.", exp:"Coragem nao e ausencia de medo — e agir apesar do medo, sabendo que Deus caminha ao seu lado. Onde voce for hoje, Ele ja esta la."},
+  {ref:"Salmos 46:10", txt:"Aquietai-vos e sabei que eu sou Deus.", exp:"Em meio ao barulho e pressa do dia a dia, Deus nos convida a parar. No silencio, encontramos Aquele que controla tudo. Respire. Ele e Deus."},
+  {ref:"Proverbios 3:5-6", txt:"Confie no Senhor de todo o seu coracao e nao se apoie em seu proprio entendimento. Reconheca-o em todos os seus caminhos, e ele endireitara as suas veredas.", exp:"Nossa compreensao e limitada, mas a sabedoria de Deus nao tem limites. Entregar o controle a Ele nao e fraqueza — e a decisao mais inteligente que voce pode tomar."},
+  {ref:"Mateus 6:33", txt:"Buscai, pois, em primeiro lugar, o Reino de Deus e a sua justica, e todas essas coisas vos serao acrescentadas.", exp:"Quando Deus e a prioridade, tudo o mais se encaixa. Nao porque a vida fica perfeita, mas porque voce tem paz e direcao para encarar qualquer situacao."},
+  {ref:"Salmos 121:2", txt:"O meu socorro vem do Senhor, que fez o ceu e a terra.", exp:"O mesmo Deus que criou o universo inteiro esta atento a voce agora. Sua ajuda nao tarda — ela vem de quem tem poder ilimitado e amor incondicional."},
+  {ref:"2 Corintios 12:9", txt:"A minha graca e suficiente para voce, pois o meu poder se aperfeioa na fraqueza.", exp:"Nos momentos em que voce se sente insuficiente, a graca de Deus preenche exatamente esse espaco. Sua fraqueza nao e um obstaculo — e o lugar onde Deus brilha mais."},
+  {ref:"Salmos 37:4", txt:"Deleite-se no Senhor, e ele atendere aos desejos do seu coracao.", exp:"Quando buscamos a Deus genuinamente, nossos desejos sao moldados pelos Seus. E entao, ao realizar nossos sonhos, estamos vivendo exatamente o que Ele planejou para nos."},
+  {ref:"Efesios 3:20", txt:"Aquele que e poderoso para fazer infinitamente mais do que tudo o que pedimos ou pensamos, de acordo com o seu poder que atua em nos.", exp:"Nossa imaginacao tem limites. Os planos de Deus para voce nao tem. O que Ele quer fazer pela sua vida e maior do que qualquer coisa que voce ja sonhou."},
+  {ref:"Salmos 34:18", txt:"O Senhor esta perto dos que tem o coracao quebrantado e salva os de espirito abatido.", exp:"Nos momentos mais dificeis, Deus nao se afasta — Ele se aproxima. Se hoje seu coracao esta pesado, saiba que voce tem a presenca do Deus do universo bem ao seu lado."},
+  {ref:"Joao 16:33", txt:"No mundo voces terao aflicoes; contudo, tende bom animo! Eu venci o mundo.", exp:"Jesus nao prometeu uma vida sem problemas — prometeu vitoria. Cada desafio ja foi vencido por Ele, e por isso podemos enfrentar tudo com coragem e paz no coracao."},
+  {ref:"Salmos 27:1", txt:"O Senhor e a minha luz e a minha salvacao; a quem temerei?", exp:"O medo perde o poder quando lembramos de quem esta do nosso lado. Com Deus como sua luz, nenhuma escuridao pode te dominar. Com Ele como sua salvacao, nada pode te destruir."},
+  {ref:"Hebreus 11:1", txt:"Ora, a fe e a certeza daquilo que esperamos e a prova das coisas que nao vemos.", exp:"Fe nao e ilusao — e a certeza baseada no carater imutavel de Deus. Voce nao precisa ver tudo para acreditar. Ele ja provou ser fiel inumeras vezes."},
+  {ref:"Romanos 15:13", txt:"Que o Deus da esperanca os enchaa de toda alegria e paz, por sua confianca nele, para que voces transbordem de esperanca pelo poder do Espirito Santo.", exp:"Alegria e paz verdadeiras nao dependem das circunstancias — vem de Deus. Deixe o Espirito Santo transbordar esperanca em voce hoje, independente do que estiver enfrentando."},
+  {ref:"Mateus 11:28", txt:"Vinde a mim, todos os que estais cansados e sobrecarregados, e eu vos aliviarei.", exp:"Jesus nao diz 'se aguente'. Ele diz 'vem ate mim'. Todo peso que voce carrega hoje, Ele esta pronto para receber. Nao precisa carregar sozinho."},
+  {ref:"Salmos 139:14", txt:"Sou temivel e maravilhosamente formado; as tuas obras sao maravilhosas, e eu sei muito bem disso.", exp:"Voce nao e um acidente. Cada detalhe de quem voce e foi pensado e criado por Deus. Hoje, olhe para si mesmo com os olhos Dele — com amor e admiracao."},
+  {ref:"Galatas 6:9", txt:"Nao nos cansemos de fazer o bem, porque a seu proprio tempo segaremos, se nao desanimarmos.", exp:"O cansaco e real, mas o proposito de Deus tambem e. Cada ato de bondade, cada esforco honesto planta uma semente. A colheita vira — nao desista antes dela."},
+  {ref:"Salmos 91:11", txt:"Pois ele ordenara que os seus anjos cuidem de voce em todos os seus caminhos.", exp:"Voce nao esta sozinho em nenhum momento. O cuidado de Deus e tao completo que Ele envia protecao para voce em cada passo da sua jornada."},
+  {ref:"1 Pedro 5:7", txt:"Lancem sobre ele toda a sua ansiedade, porque ele tem cuidado de voces.", exp:"Ansiedade nao e algo que voce precisa resolver sozinho. Deus convida voce a entregar cada preocupacao para Ele — nao porque ignora seu problema, mas porque cuida de voce pessoalmente."},
+  {ref:"Isaias 41:10", txt:"Nao tema, porque eu sou contigo; nao te assombres, porque eu sou o teu Deus. Eu te fortaleço, eu te ajudo, eu te sustenho com a minha direita fiel.", exp:"Tres promessas em um versiculo: forcas, ajuda e sustento. Tudo o que voce precisa para enfrentar o dia esta disponivel para voce atraves de Deus."},
+  {ref:"Proverbios 16:3", txt:"Entregue ao Senhor o que voce faz, e os seus planos serao bem-sucedidos.", exp:"O segredo do verdadeiro sucesso nao esta apenas no esforco humano, mas em alinhar seus planos com os propositos de Deus. Entregue seus projetos a Ele e veja o que acontece."},
+  {ref:"Salmos 16:8", txt:"Pus o Senhor continuamente diante de mim; porque ele esta a minha direita, nao serei abalado.", exp:"Quando Deus e o centro da nossa perspectiva, a estabilidade vem naturalmente. Nao que os ventos parem — mas que voce permanece firme mesmo quando eles sopram forte."},
+  {ref:"Joao 14:27", txt:"Deixo-lhes a paz; a minha paz lhes dou. Nao a dou como o mundo da. Nao se perturbe o coracao de voces; nao tenham medo.", exp:"A paz de Jesus e diferente da paz do mundo. O mundo oferece paz quando nao ha problemas. Jesus oferece paz no meio dos problemas. Essa e a paz que transcende todo entendimento."},
+  {ref:"Jeremias 17:7", txt:"Bendito e o homem que confia no Senhor e cuja esperanca e o Senhor.", exp:"Confiar em Deus nao e ingenuidade — e sabedoria. Quem coloca sua esperanca Nele nao fica desapontado, porque Ele e o unico que nunca falha e nunca abandona."},
+  {ref:"Salmos 73:26", txt:"A minha carne e o meu coracao podem desfalecer, mas Deus e a forca do meu coracao e a minha porcao para sempre.", exp:"Quando suas forcas humanas chegam ao fim, a historia nao termina — ela comeca de verdade. Deus se torna sua porcao quando tudo mais parece insuficiente."},
+  {ref:"Apocalipse 21:4", txt:"Ele enxugara toda lagrima dos seus olhos. Nao havera mais morte, nem pranto, nem choro, nem dor.", exp:"Qualquer sofrimento que voce enfrenta hoje e temporario. Um dia, Deus pessoalmente vai enxugar cada lagrima do seu rosto. Essa esperanca transforma o presente."}
+];
+
+function renderVersiculo() {
+  var day = new Date().getDate();
+  var v = versiculos[(day - 1) % versiculos.length];
+  var el = document.getElementById('view-versiculo');
+  el.innerHTML =
+    '<div style="text-align:center;padding:28px 0 20px;">' +
+      '<div style="font-size:48px;margin-bottom:12px;">✝️</div>' +
+      '<div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#7c3aed;margin-bottom:4px;">PALAVRA DO DIA</div>' +
+      '<div style="font-size:12px;color:var(--gray);">' + new Date().toLocaleDateString("pt-BR", {weekday:"long",day:"numeric",month:"long"}) + '</div>' +
+    '</div>' +
+    '<div style="background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(167,139,250,.08));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:24px 20px;margin-bottom:16px;">' +
+      '<div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:12px;letter-spacing:.5px;">📖 ' + v.ref + '</div>' +
+      '<div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--white);line-height:1.6;font-style:italic;margin-bottom:0;">"' + v.txt + '"</div>' +
+    '</div>' +
+    '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;">' +
+      '<div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gray2);margin-bottom:10px;">REFLEXÃO</div>' +
+      '<div style="font-size:14px;color:var(--gray);line-height:1.75;">' + v.exp + '</div>' +
+    '</div>' +
+    '<div style="text-align:center;margin-top:20px;font-size:12px;color:var(--gray2);">O versículo muda todo dia à meia-noite 🕛</div>';
+}
+
+function renderVersiculo(){var day=new Date().getDate();var v=versiculos[(day-1)%versiculos.length];var el=document.getElementById("view-versiculo");el.innerHTML='<div style="text-align:center;padding:28px 0 20px;"><div style="font-size:48px;margin-bottom:12px;">✝️</div><div style="font-family:Syne,sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:#7c3aed;margin-bottom:4px;">PALAVRA DO DIA</div><div style="font-size:12px;color:var(--gray);">'+new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"})+'</div></div><div style="background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(167,139,250,.08));border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:24px 20px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:12px;">📖 '+v.ref+'</div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;color:var(--white);line-height:1.6;font-style:italic;">&ldquo;'+v.txt+'&rdquo;</div></div><div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;"><div style="font-size:11px;font-weight:700;letter-spacing:2px;color:var(--gray2);margin-bottom:10px;">REFLEXÃO</div><div style="font-size:14px;color:var(--gray);line-height:1.75;">'+v.exp+'</div></div><div style="text-align:center;margin-top:20px;font-size:12px;color:var(--gray2);">O versículo muda todo dia à meia-noite 🕛</div>';}
+
+
+
+function openViewer(src, caption, date, e) {
+  if (e) e.stopPropagation();
+  document.getElementById('viewer-img').src = src;
+  document.getElementById('viewer-caption').textContent = caption;
+  document.getElementById('viewer-date').textContent = date;
+  document.getElementById('photo-viewer').classList.add('open');
+}
+function closeViewer() {
+  document.getElementById('photo-viewer').classList.remove('open');
+}
+
+// ALBUM
+var albumTempData = null;
+
+function albumPickPhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    albumTempData = e.target.result;
+    var preview = document.getElementById('modal-preview');
+    preview.src = albumTempData;
+    preview.style.display = 'block';
+    document.getElementById('modal-caption').value = '';
+    document.getElementById('album-modal').classList.add('open');
+  };
+  reader.readAsDataURL(file);
+  input.value = '';
+}
+
+function albumCloseModal() {
+  document.getElementById('album-modal').classList.remove('open');
+  albumTempData = null;
+}
+
+function albumSavePhoto() {
+  if (!albumTempData) return;
+  var caption = document.getElementById('modal-caption').value.trim() || 'Sem legenda';
+  var photos = albumGetPhotos();
+  var photo = {
+    id: Date.now(),
+    data: albumTempData,
+    caption: caption,
+    date: new Date().toLocaleDateString('pt-BR', {day:'numeric', month:'short', year:'numeric'})
+  };
+  photos.unshift(photo);
+  // Keep max 50 photos
+  if (photos.length > 50) photos = photos.slice(0, 50);
+  try { localStorage.setItem('raio_album', JSON.stringify(photos)); } catch(e) {
+    alert('Armazenamento cheio! Apague algumas fotos.');
+    albumCloseModal();
+    return;
+  }
+  albumCloseModal();
+  albumRender();
+}
+
+function albumGetPhotos() {
+  try { return JSON.parse(localStorage.getItem('raio_album') || '[]'); } catch(e) { return []; }
+}
+
+function albumDelete(id) {
+  var photos = albumGetPhotos().filter(function(p) { return p.id !== id; });
+  try { localStorage.setItem('raio_album', JSON.stringify(photos)); } catch(e) {}
+  albumRender();
+}
+
+function albumRender() {
+  var photos = albumGetPhotos();
+  var grid = document.getElementById('album-grid');
+  var count = document.getElementById('album-count');
+  count.textContent = photos.length + ' FOTO' + (photos.length !== 1 ? 'S' : '');
+  if (photos.length === 0) {
+    grid.innerHTML = '<div class="album-empty" style="grid-column:1/-1"><div class="album-empty-icon">🏋️</div><div class="album-empty-txt">Nenhuma foto ainda</div><div class="album-empty-sub">Adicione seu primeiro registro de treino!</div></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  photos.forEach(function(p) {
+    var div = document.createElement('div');
+    div.className = 'album-item';
+    div.innerHTML = '<img class="album-img" src="' + p.data + '" loading="lazy" onclick="openViewer(\''+p.data+'\',\''+p.caption+'\',\''+p.date+'\',event)">' +
+      '<button class="album-del" onclick="event.stopPropagation();albumDelete(' + p.id + ')">✕</button>' +
+      '<div class="album-info" onclick="openViewer(\''+p.data+'\',\''+p.caption+'\',\''+p.date+'\',event)" style="cursor:pointer"><div class="album-caption">' + p.caption + '</div><div class="album-date">' + p.date + '</div></div>';
+    grid.appendChild(div);
+  });
+}
+
+
+// RETROSPECTIVA SEMANAL
+function renderSemana() {
+  var el = document.getElementById('view-semana');
+  var today = new Date();
+  var dow = today.getDay(); // 0=dom, 6=sab
+  var isSat = dow === 6;
+
+  // Get week dates (seg to sab)
+  var weekDays = [1,2,3,4,5,6]; // Seg=1 ... Sab=6
+  var weekNames = ['','Segunda','Terca','Quarta','Quinta','Sexta','Sabado'];
+  var weekEmojis = ['','💻','🏋️','💻','🏋️','💻','🏐'];
+
+  // Count checks per day
+  var totalTasks = 0, totalDone = 0;
+  var dayStats = [];
+  for (var d = 1; d <= 6; d++) {
+    var key = 'k' + d;
+    var ck = checked[key] || {};
+    var items = schedule[d] || [];
+    var done = 0;
+    for (var i = 0; i < items.length; i++) { if (ck[i]) done++; }
+    totalTasks += items.length;
+    totalDone += done;
+    dayStats.push({day: d, name: weekNames[d], emoji: weekEmojis[d], done: done, total: items.length});
+  }
+
+  var pct = totalTasks > 0 ? Math.round(totalDone / totalTasks * 100) : 0;
+
+  // Medal based on pct
+  var medal = pct >= 90 ? '🥇' : pct >= 70 ? '🥈' : pct >= 50 ? '🥉' : '💪';
+  var medalTxt = pct >= 90 ? 'Semana Perfeita!' : pct >= 70 ? 'Semana Excelente!' : pct >= 50 ? 'Boa Semana!' : 'Continue Evoluindo!';
+  var medalColor = pct >= 90 ? '#FFD700' : pct >= 70 ? '#C0C0C0' : pct >= 50 ? '#CD7F32' : 'var(--blue)';
+
+  // Get week photos
+  var photos = albumGetPhotos();
+  // Photos from this week (last 7 days)
+  var weekPhotos = photos.slice(0, 6);
+
+  // Treinos count
+  var treinos = 0;
+  for (var d2 = 1; d2 <= 6; d2++) {
+    var ck2 = checked['k'+d2] || {};
+    var items2 = schedule[d2] || [];
+    for (var i2 = 0; i2 < items2.length; i2++) {
+      if (ck2[i2] && (items2[i2].tp === 'treino')) treinos++;
+    }
+  }
+
+  var html = '';
+
+  // Header
+  html += '<div style="text-align:center;padding:24px 0 16px;">' +
+    '<div style="font-size:52px;margin-bottom:8px;">' + medal + '</div>' +
+    '<div style="font-family:Syne,sans-serif;font-size:22px;font-weight:800;color:' + medalColor + ';">' + medalTxt + '</div>' +
+    '<div style="font-size:12px;color:var(--gray);margin-top:4px;">Retrospectiva da semana</div>' +
+  '</div>';
+
+  // Big stats
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">' +
+    '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">' +
+      '<div style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--green);">' + pct + '%</div>' +
+      '<div style="font-size:10px;color:var(--gray);margin-top:2px;">Concluido</div>' +
+    '</div>' +
+    '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">' +
+      '<div style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--blue);">' + treinos + '</div>' +
+      '<div style="font-size:10px;color:var(--gray);margin-top:2px;">Treinos</div>' +
+    '</div>' +
+    '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">' +
+      '<div style="font-family:Syne,sans-serif;font-size:26px;font-weight:800;color:var(--orange);">' + weekPhotos.length + '</div>' +
+      '<div style="font-size:10px;color:var(--gray);margin-top:2px;">Fotos</div>' +
+    '</div>' +
+  '</div>';
+
+  // Progress bar
+  html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:14px;">' +
+    '<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gray2);margin-bottom:12px;">CHECKLIST POR DIA</div>';
+  dayStats.forEach(function(ds) {
+    var dp = ds.total > 0 ? Math.round(ds.done/ds.total*100) : 0;
+    var bc = dp >= 80 ? 'var(--green)' : dp >= 50 ? 'var(--yellow)' : 'var(--orange)';
+    html += '<div style="margin-bottom:10px;">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:12px;color:var(--white);">' + ds.emoji + ' ' + ds.name + '</span>' +
+        '<span style="font-size:12px;color:var(--gray);">' + ds.done + '/' + ds.total + '</span>' +
+      '</div>' +
+      '<div style="background:var(--card2);border-radius:6px;height:6px;overflow:hidden;">' +
+        '<div style="width:' + dp + '%;height:100%;background:' + bc + ';border-radius:6px;transition:width .5s;"></div>' +
+      '</div>' +
+    '</div>';
+  });
+  html += '</div>';
+
+  // Photos section
+  if (weekPhotos.length > 0) {
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:2px;color:var(--gray2);margin-bottom:10px;">FOTOS DA SEMANA</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:16px;">';
+    weekPhotos.forEach(function(p) {
+      html += '<div style="border-radius:10px;overflow:hidden;aspect-ratio:1;background:var(--card);" onclick="openViewer(\''+p.data+'\',\''+p.caption+'\',\''+p.date+'\',event)">' +
+        '<img src="'+p.data+'" style="width:100%;height:100%;object-fit:cover;" loading="lazy">' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Motivational message
+  var msgs = [
+    'Cada treino e um deposito na conta do seu futuro. Continue investindo!',
+    'Consistencia bate talento quando o talento nao e consistente. Voce esta no caminho!',
+    'O seu corpo consegue tudo. E a sua mente que voce precisa convencer.',
+    'Progresso, nao perfeicao. Cada dia melhor que ontem!'
+  ];
+  var msg = msgs[Math.floor(Math.random() * msgs.length)];
+
+  html += '<div style="background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(59,130,246,.08));border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;">' +
+    '<div style="font-size:20px;margin-bottom:8px;">⚡</div>' +
+    '<div style="font-size:13px;color:var(--white);line-height:1.6;font-style:italic;">' + msg + '</div>' +
+  '</div>';
+
+  // Only show on Saturday message if not saturday
+  if (!isSat) {
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;text-align:center;">' +
+      '<div style="font-size:12px;color:var(--gray);">A retrospectiva completa aparece todo <strong style="color:var(--white)">sabado</strong> com o resumo final da semana. Ja mostrando o progresso atual!</div>' +
+    '</div>';
+  }
+
+  el.innerHTML = html;
+}
+
+
+// DRAWER
+function toggleDrawer() {
+  document.getElementById('drawer').classList.toggle('open');
+  document.getElementById('drawer-overlay').classList.toggle('open');
+}
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+function swDrawer(tab) {
+  sw(tab);
+  closeDrawer();
+  // Update active state
+  document.querySelectorAll('.drawer-item').forEach(function(item) {
+    item.classList.toggle('active', item.getAttribute('data-tab') === tab);
+  });
+}
+
+
+// FIREBASE INIT
+window.__firebaseReady = function() {
+firebase.initializeApp({
+  apiKey: "AIzaSyC49jVKkwz3wvAcHwaGLvLica4gWfoB5dc",
+  authDomain: "raio-app-4fa08.firebaseapp.com",
+  projectId: "raio-app-4fa08",
+  storageBucket: "raio-app-4fa08.firebasestorage.app",
+  messagingSenderId: "952683759094",
+  appId: "1:952683759094:web:1eef3b65c1b767fc9cf3d7"
+});
+
+var auth = firebase.auth();
+var db = firebase.firestore();
+var currentUser = null;
+
+function loginGoogle() {
+  document.getElementById('login-loading').textContent = 'Entrando...';
+  var provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(function(e) {
+    document.getElementById('login-loading').textContent = 'Erro: ' + e.message;
+  });
+}
+
+function logout() {
+  auth.signOut();
+}
+
+auth.onAuthStateChanged(function(user) {
+  if (user) {
+    currentUser = user;
+    document.getElementById('login-screen').style.display = 'none';
+    // Check if onboarding done
+    db.collection('users').doc(user.uid).get().then(function(doc) {
+      if (doc.exists && doc.data().onboardingDone) {
+        var data = doc.data();
+        // Apply user data
+        applyUserData(data);
+        showApp();
+      } else {
+        startOnboarding();
+      }
+    }).catch(function() {
+      showApp();
+    });
+    // Update header with user avatar
+    updateHeader(user);
+  } else {
+    currentUser = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('splash').style.display = 'none';
+  }
+});
+
+function updateHeader(user) {
+  var greeting = document.querySelector('.greeting');
+  if (greeting && user.displayName) {
+    var firstName = user.displayName.split(' ')[0];
+    greeting.innerHTML = 'Oi, <span>' + firstName + '</span> 👋';
+  }
+}
+
+function applyUserData(data) {
+  if (data.nome) {
+    var greeting = document.querySelector('.greeting');
+    if (greeting) greeting.innerHTML = 'Oi, <span>' + data.nome.split(' ')[0] + '</span> 👋';
+  }
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('onboarding').style.display = 'none';
+}
+
+// ONBOARDING
+var obStep = 0;
+var obData = {};
+
+var obSteps = [
+  {
+    title: 'Qual o seu nome?',
+    sub: 'Como quer ser chamado no app',
+    render: function() {
+      return '<div class="ob-field"><div class="ob-label">Seu nome</div><input class="ob-input" id="ob-nome" type="text" placeholder="Ex: Matheus" oninput="obValidate()"></div>';
+    },
+    validate: function() { return document.getElementById('ob-nome') && document.getElementById('ob-nome').value.trim().length > 1; },
+    save: function() { obData.nome = document.getElementById('ob-nome').value.trim(); }
+  },
+  {
+    title: 'Qual o seu objetivo?',
+    sub: 'Vamos personalizar sua rotina',
+    render: function() {
+      var opts = ['Perder gordura', 'Ganhar massa', 'Melhorar performance', 'Mais saude', 'Condicionamento'];
+      return '<div class="ob-chips">' + opts.map(function(o) {
+        return '<div class="ob-chip" onclick="obChip(this,&quot;ob-obj&quot;)" data-val="'+o+'">'+o+'</div>';
+      }).join('') + '</div><input type="hidden" id="ob-obj">';
+    },
+    validate: function() { return document.getElementById('ob-obj') && document.getElementById('ob-obj').value; },
+    save: function() { obData.objetivo = document.getElementById('ob-obj').value; }
+  },
+  {
+    title: 'Qual o seu esporte?',
+    sub: 'Pode escolher mais de um',
+    render: function() {
+      var opts = ['Futevolei', 'Futebol', 'Academia', 'Crossfit', 'Corrida', 'Natacao', 'Ciclismo', 'Tenis', 'Basquete', 'Volei', 'Funcional', 'Outro'];
+      return '<div class="ob-chips">' + opts.map(function(o) {
+        return '<div class="ob-chip multi" onclick="obChipMulti(this)" data-val="'+o+'">'+o+'</div>';
+      }).join('') + '</div><input type="hidden" id="ob-esporte" value="">';
+    },
+    validate: function() { return document.getElementById('ob-esporte') && document.getElementById('ob-esporte').value; },
+    save: function() { obData.esporte = document.getElementById('ob-esporte').value; }
+  },
+  {
+    title: 'Dias e horarios de treino',
+    sub: 'Quais dias voce treina?',
+    render: function() {
+      var dias = ['Seg','Ter','Qua','Qui','Sex','Sab','Dom'];
+      return '<div class="ob-field"><div class="ob-label">Dias de treino</div><div class="ob-chips">' +
+        dias.map(function(d) {
+          return '<div class="ob-chip multi" onclick="obChipMulti(this)" data-val="'+d+'">'+d+'</div>';
+        }).join('') + '</div><input type="hidden" id="ob-dias" value=""></div>' +
+        '<div class="ob-field"><div class="ob-label">Horario de treino</div>' +
+        '<input class="ob-input" id="ob-htreino" type="time" value="19:00"></div>' +
+        '<div class="ob-field"><div class="ob-label">Duracao media</div>' +
+        '<div class="ob-chips">' +
+        ['30 min','1 hora','1h30','2 horas','Mais de 2h'].map(function(d) {
+          return '<div class="ob-chip" onclick="obChip(this,&quot;ob-dur&quot;)" data-val="'+d+'">'+d+'</div>';
+        }).join('') + '</div><input type="hidden" id="ob-dur"></div>';
+    },
+    validate: function() { return document.getElementById('ob-dias') && document.getElementById('ob-dias').value; },
+    save: function() {
+      obData.diasTreino = document.getElementById('ob-dias').value;
+      obData.horarioTreino = document.getElementById('ob-htreino') ? document.getElementById('ob-htreino').value : '19:00';
+      obData.duracao = document.getElementById('ob-dur') ? document.getElementById('ob-dur').value : '';
+    }
+  },
+  {
+    title: 'Seus horarios do dia',
+    sub: 'Para montar sua rotina ideal',
+    render: function() {
+      return '<div class="ob-time-grid">' +
+        '<div class="ob-time-card"><div class="ob-time-label">Acordar</div><input class="ob-time-input" id="ob-acordar" type="time" value="07:00"></div>' +
+        '<div class="ob-time-card"><div class="ob-time-label">Dormir</div><input class="ob-time-input" id="ob-dormir" type="time" value="23:00"></div>' +
+        '<div class="ob-time-card"><div class="ob-time-label">Almoco</div><input class="ob-time-input" id="ob-almoco" type="time" value="13:00"></div>' +
+        '<div class="ob-time-card"><div class="ob-time-label">Janta</div><input class="ob-time-input" id="ob-janta" type="time" value="20:00"></div>' +
+      '</div>';
+    },
+    validate: function() { return true; },
+    save: function() {
+      obData.acordar = document.getElementById('ob-acordar').value;
+      obData.dormir = document.getElementById('ob-dormir').value;
+      obData.almoco = document.getElementById('ob-almoco').value;
+      obData.janta = document.getElementById('ob-janta').value;
+    }
+  },
+  {
+    title: 'Seus suplementos',
+    sub: 'Quais voce usa atualmente?',
+    render: function() {
+      var opts = ['Whey Protein','Pre-treino','Creatina','BCAA','Colageno','Vitamina C','Vitamina D','Omega 3','Glutamina','Nenhum por enquanto'];
+      return '<div class="ob-chips">' + opts.map(function(o) {
+        return '<div class="ob-chip multi" onclick="obChipMulti(this)" data-val="'+o+'">'+o+'</div>';
+      }).join('') + '</div><input type="hidden" id="ob-suple" value="Nenhum">';
+    },
+    validate: function() { return true; },
+    save: function() {
+      var v = document.getElementById('ob-suple').value;
+      obData.suplementos = v || 'Nenhum';
+    }
+  }
+];
+
+function startOnboarding() {
+  obStep = 0;
+  obData = {};
+  document.getElementById('onboarding').style.display = 'flex';
+  document.getElementById('splash').style.display = 'none';
+  renderObStep();
+}
+
+function renderObStep() {
+  var step = obSteps[obStep];
+  // Dots
+  var dots = '';
+  for (var i = 0; i < obSteps.length; i++) {
+    dots += '<div class="ob-dot' + (i <= obStep ? ' active' : '') + '"></div>';
+  }
+  document.getElementById('ob-dots').innerHTML = dots;
+  document.getElementById('ob-step-title').textContent = step.title;
+  document.getElementById('ob-step-sub').textContent = step.sub;
+  document.getElementById('ob-body').innerHTML = step.render();
+  var isLast = obStep === obSteps.length - 1;
+  document.getElementById('ob-next').textContent = isLast ? 'Comecar! ⚡' : 'Continuar →';
+  obValidate();
+}
+
+function obValidate() {
+  var step = obSteps[obStep];
+  document.getElementById('ob-next').disabled = !step.validate();
+}
+
+function obChip(el, hiddenId) {
+  var parent = el.parentElement;
+  parent.querySelectorAll('.ob-chip').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
+  document.getElementById(hiddenId).value = el.getAttribute('data-val');
+  obValidate();
+}
+
+function obChipMulti(el) {
+  el.classList.toggle('sel');
+  // Find hidden input in same ob-field or ob-body
+  var hiddenId = el.closest('.ob-chips').nextElementSibling;
+  if (hiddenId && hiddenId.type === 'hidden') {
+    var vals = [];
+    el.closest('.ob-chips').querySelectorAll('.ob-chip.sel').forEach(function(c) {
+      vals.push(c.getAttribute('data-val'));
+    });
+    hiddenId.value = vals.join(', ');
+  }
+  obValidate();
+}
+
+function obNext() {
+  var step = obSteps[obStep];
+  step.save();
+  if (obStep < obSteps.length - 1) {
+    obStep++;
+    renderObStep();
+  } else {
+    // Save to Firestore
+    obData.onboardingDone = true;
+    obData.criadoEm = new Date().toISOString();
+    if (currentUser) {
+      db.collection('users').doc(currentUser.uid).set(obData).then(function() {
+        applyUserData(obData);
+        showApp();
+        init();
+      }).catch(function() {
+        showApp();
+        init();
+      });
+    } else {
+      showApp();
+      init();
+    }
+  }
+}
+
+}; // fim __firebaseReady
+// Only init if user already logged in (auth handles it)
+
+</script>
+</body>
+</html>
